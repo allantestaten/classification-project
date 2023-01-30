@@ -26,19 +26,29 @@ def model_columns(train,validate,test):
     
   return X_train, X_validate, y_train, y_validate, X_test, y_test
 
-def baseline(train):
-    ''' this function will generate the baseline model and print its performance '''
-    
-    #identifying mode of target variable 
-    y_train = train['has_churned']
-    baseline = y_train.mode()
+def baseline(y_train,y_validate):
+  ''' this function will generate the baseline model and print its performance '''
 
-    # creating boolean to match where y_train is no 
-    matches_baseline_prediction = (y_train == 0)
+  # We need y_train and y_validate to be dataframes to append the new columns with predicted values. 
+  y_train = pd.DataFrame(y_train)
+  y_validate = pd.DataFrame(y_validate)
 
-    #calculating baseline and printing it
-    baseline_accuracy = matches_baseline_prediction.mean()
-    print(f"Baseline accuracy: {round(baseline_accuracy, 2)}")
+  # 1. Predict property_value_pred_mean
+  prop_value_pred_mean = y_train['property_value'].mean()
+  y_train['prop_value_pred_mean'] = prop_value_pred_mean
+  y_validate['prop_value_pred_mean'] = prop_value_pred_mean
+
+  # 2. compute prop_value_pred_median
+  prop_value_pred_median = y_train['property_value'].median()
+  y_train['prop_value_pred_median'] = prop_value_pred_median
+  y_validate['prop_value_pred_median'] = prop_value_pred_median
+
+  # 3. RMSE of prop_value_pred_median
+  rmse_baseline_train = mean_squared_error(y_train.property_value, y_train.prop_value_pred_median)**(1/2)
+  rmse_baseline_validate = mean_squared_error(y_validate.property_value, y_validate.prop_value_pred_median)**(1/2)
+
+  print("RMSE using Median\nTrain/In-Sample: ", round(rmse_train, 2), 
+      "\nValidate/Out-of-Sample: ", round(rmse_validate, 2))
 
 def decision_tree_model(X_train, X_validate, y_train, y_validate):
     '''this function will create my decision tree model and print its performance'''

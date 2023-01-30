@@ -1,0 +1,13 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+from scipy import stats
+
+def get_bar_churn(train):
+    '''this function will produce a bar chart of churn'''
+
+    #identifying data frame to be used in chart
+    df = train
+
+    #generates bar plot 
+    sns.countplot(x=df["churn"]).set(title='Churned Customers')
